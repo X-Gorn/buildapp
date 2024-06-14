@@ -16,12 +16,13 @@ KEYSTORE_PATH = Path(RELTOOLS_ROOT / 'buildapp-keystore.jks')
 
 
 class CompileApp:
-    def __init__(self, decompiled_path, output_apk_path):
+    def __init__(self, decompiled_path, output_apk_path, net_sec_conf):
         self.prealigned_file = f'{output_apk_path}_prealign'
         self.decompiled_path = decompiled_path
+        self.net_sec_conf = '-n' if net_sec_conf else ''
 
     def __enter__(self):
-        run_process(f'apktool b {self.decompiled_path} -o {self.prealigned_file}', input_string='\n')
+        run_process(f'apktool b {self.decompiled_path} -o {self.prealigned_file} {self.net_sec_conf}', input_string='\n')
 
     def __exit__(self, exc_type, exc_val, exc_tb):
         Path(self.prealigned_file).unlink()
@@ -95,12 +96,13 @@ def parse_arguments():
     parser.add_argument('-i', '--install', action='store_true', help='install on the adb device')
     parser.add_argument('-n', '--do-not-sign', action='store_true', help='do not sign the built apk')
     parser.add_argument('-k', '--keystore-path', required=False, help='optional keystore final to sign the apk with')
+    parser.add_argument('-c', '--net-sec-conf', action='store_true', help='Add a generic Network Security Configuration file in the output APK')
 
     return parser.parse_args()
 
 
-def build_app(output_apk_path, decompiled_folder, keystore_path=None, install_after_build=False, sign_after_build=True):
-    with CompileApp(decompiled_folder, output_apk_path):
+def build_app(output_apk_path, decompiled_folder, keystore_path=None, install_after_build=False, sign_after_build=True, net_sec_conf=False):
+    with CompileApp(decompiled_folder, output_apk_path, net_sec_conf):
         AlignApk(output_apk_path)
 
         if sign_after_build:
@@ -113,7 +115,7 @@ def build_app(output_apk_path, decompiled_folder, keystore_path=None, install_af
 
 def main():
     args = parse_arguments()
-    build_app(args.output_apk_path, args.decompiled_path, args.keystore_path, args.install, not args.do_not_sign)
+    build_app(args.output_apk_path, args.decompiled_path, args.keystore_path, args.install, not args.do_not_sign, agrs.net_sec_conf)
 
     print('buildapp completed successfully!')
 
