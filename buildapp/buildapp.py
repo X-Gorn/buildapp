@@ -115,7 +115,7 @@ def build_app(output_apk_path, decompiled_folder, keystore_path=None, install_af
 
 def main():
     args = parse_arguments()
-    build_app(args.output_apk_path, args.decompiled_path, args.keystore_path, args.install, not args.do_not_sign, agrs.net_sec_conf)
+    build_app(args.output_apk_path, args.decompiled_path, args.keystore_path, args.install, not args.do_not_sign, args.net_sec_conf)
 
     print('buildapp completed successfully!')
 
