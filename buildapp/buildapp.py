@@ -22,14 +22,14 @@ class CompileApp:
         self.net_sec_conf = '-n' if net_sec_conf else ''
 
     def __enter__(self):
-        run_process(f'apktool b {self.decompiled_path} -o {self.prealigned_file} {self.net_sec_conf}', input_string='\n')
+        run_process(f'apktool b "{self.decompiled_path}" -o "{self.prealigned_file}" {self.net_sec_conf}', input_string='\n')
 
     def __exit__(self, exc_type, exc_val, exc_tb):
         Path(self.prealigned_file).unlink()
 
 class AlignApk:
     def __init__(self, output_apk_path):
-        run_process(f'zipalign -p -f -v 4 {output_apk_path}_prealign {output_apk_path}')
+        run_process(f'zipalign -p -f -v 4 "{output_apk_path}_prealign" "{output_apk_path}"')
 
 class ObtainKeystore:
     def __init__(self, keystore_path):
@@ -51,14 +51,14 @@ class ObtainKeystore:
 class SignApk:
     def __init__(self, output_apk_path):
         self.output_apk_path = output_apk_path
-        run_process(f'apksigner sign --ks-key-alias {KEYSTORE_ALIAS} --ks {KEYSTORE_PATH} {output_apk_path}', input_string=f'{KEYSTORE_PASSWORD}\n')
+        run_process(f'apksigner sign --ks-key-alias {KEYSTORE_ALIAS} --ks {KEYSTORE_PATH} "{output_apk_path}"', input_string=f'{KEYSTORE_PASSWORD}\n')
 
     def __del__(self):
         Path(f'{self.output_apk_path}.idsig').unlink()
 
 class InstallApk:
     def __init__(self, apk_path):
-        run_process(f'adb install -r {apk_path}')
+        run_process(f'adb install -r "{apk_path}"')
 
 
 def run_process(cmdline, input_string='', ignore_stderr=False):
