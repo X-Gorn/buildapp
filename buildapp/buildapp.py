@@ -51,7 +51,7 @@ class ObtainKeystore:
 class SignApk:
     def __init__(self, output_apk_path):
         self.output_apk_path = output_apk_path
-        run_process(f'apksigner sign --ks-key-alias {KEYSTORE_ALIAS} --ks {KEYSTORE_PATH} "{output_apk_path}"', input_string=f'{KEYSTORE_PASSWORD}\n')
+        run_process(f'apksigner sign --ks-key-alias {KEYSTORE_ALIAS} --ks "{KEYSTORE_PATH}" "{output_apk_path}"', input_string=f'{KEYSTORE_PASSWORD}\n')
 
     def __del__(self):
         Path(f'{self.output_apk_path}.idsig').unlink()
